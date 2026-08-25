@@ -20,7 +20,7 @@ public class InvoiceController : ControllerBase
     /// Lists invoices for the authenticated merchant.
     /// </summary>
     //[Authorize(Policy = "InvoicesRead")]
-    [HttpGet("GetInvoices")]
+    [HttpGet]
     public async Task<IActionResult> GetInvoicesAsync(
         [FromQuery] string? status,
         [FromQuery] int limit = 20,
@@ -41,7 +41,7 @@ public class InvoiceController : ControllerBase
     /// </summary>
     [EnableRateLimiting("agent-policy")]
     //[Authorize(Policy = "InvoicesWrite")]
-    [HttpPost("CreateInvoice")]
+    [HttpPost]
     public async Task<IActionResult> CreateInvoiceAsync(
         [FromHeader(Name = "Idempotency-Key")]
         string idempotencyKey,
@@ -54,7 +54,7 @@ public class InvoiceController : ControllerBase
             cancellationToken);
 
         return CreatedAtAction(
-            nameof(GetInvoice),
+            nameof(GetInvoiceAsync),
             new { id = result.Id },
             result);
     }
@@ -63,7 +63,7 @@ public class InvoiceController : ControllerBase
     /// Gets an invoice by ID.
     /// </summary>
     [Authorize(Policy = "InvoicesRead")]
-    [HttpGet("GetInvoice{id:guid}")]
+    [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetInvoiceAsync(
         Guid id,
         CancellationToken cancellationToken)
@@ -79,7 +79,7 @@ public class InvoiceController : ControllerBase
     /// Finalizes a draft invoice.
     /// </summary>
     [Authorize(Policy = "InvoicesWrite")]
-    [HttpPost("Finalize{id:guid}")]
+    [HttpPost("{id:guid}/finalize")]
     public async Task<IActionResult> FinalizeAsync(
         Guid id,
         CancellationToken cancellationToken)
@@ -95,7 +95,7 @@ public class InvoiceController : ControllerBase
     /// Creates a cancellation intent.
     /// </summary>
     [Authorize(Policy = "InvoicesWrite")]
-    [HttpPost("CreateCancellationIntent{id:guid}")]
+    [HttpPost("{id:guid}/cancellation-intent")]
     public async Task<IActionResult> CreateCancellationIntentAsync(
         Guid id,
         CancellationToken cancellationToken)
@@ -110,8 +110,7 @@ public class InvoiceController : ControllerBase
     /// <summary>
     /// Cancels an invoice using a previously created intent.
     /// </summary>[Authorize(Policy = "InvoicesWrite")]
-    [HttpPost("Cancel")]
-    [HttpPost("Cancel")]
+    [HttpPost("{id:guid}/cancel")]
     public async Task<IActionResult> CancelAsync(
         [FromBody] CancelInvoiceRequest request,
         CancellationToken cancellationToken)
