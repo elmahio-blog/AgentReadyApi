@@ -6,5 +6,4 @@ public enum InvoiceStatus
     Finalized = 2,
     Paid = 3,
     Cancelled = 4
-    
 }

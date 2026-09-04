@@ -131,3 +131,5 @@ D:\Elmah.io\AgentReadyApi\AgentReadyApi\obj\Debug\net10.0\refint\AgentReadyApi.d
 D:\Elmah.io\AgentReadyApi\AgentReadyApi\obj\Debug\net10.0\AgentReadyApi.pdb
 D:\Elmah.io\AgentReadyApi\AgentReadyApi\obj\Debug\net10.0\AgentReadyApi.genruntimeconfig.cache
 D:\Elmah.io\AgentReadyApi\AgentReadyApi\obj\Debug\net10.0\ref\AgentReadyApi.dll
+D:\Elmah.io\AgentReadyApi\AgentReadyApi\bin\Debug\net10.0\AgentReadyApi.staticwebassets.runtime.json
+D:\Elmah.io\AgentReadyApi\AgentReadyApi\obj\Debug\net10.0\compressed\shhtn74c2m-{0}-u5hn2pbxs0-u5hn2pbxs0.gz

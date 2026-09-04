@@ -1,0 +1,32 @@
+﻿LLM-Optimized Metadata
+Another popular information for AI agent is LLM-optimized metadata in llms.txt file. The text file resides in the project's root directory works as a index or guide for OpenAPI. Hundreds of organizations including Antrhopic,  Perplexity and Cursor have adopted llms.txt.
+Step 6: Create llms.txt file in the wwwroot directory
+Put the metadata inside the file.# My API
+
+> REST API for managing customers, invoices, payments and orders.
+
+## API Documentation
+
+- OpenAPI specification: /openapi/v1.json
+- Interactive documentation: /swagger
+
+## Main API Areas
+
+- Customers: /api/customers
+- Invoices: /api/invoices
+- Payments: /api/payments
+- Orders: /api/orders
+
+## Authentication
+
+OAuth 2.0 / OpenID Connect.
+
+## Agent Guidance
+
+- Use the OpenAPI specification for the complete list of operations.
+- Respect required permissions and scopes.
+- Use Idempotency-Key for state-changing operations where required.
+- Errors are returned using RFC 7807 Problem Details.
+
+
+Although we only created 

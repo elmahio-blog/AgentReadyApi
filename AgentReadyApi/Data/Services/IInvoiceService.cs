@@ -3,7 +3,7 @@
 namespace AgentReadyApi.Data.Services;
 public interface IInvoiceService
 {
-    Task<InvoiceListResponse> GetInvoicesAsync(
+    Task<PaginatedResponse<InvoiceResponse>> GetInvoicesAsync(
         string? status,
         int limit,
         string? cursor,

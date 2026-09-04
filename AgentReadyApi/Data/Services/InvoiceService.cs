@@ -12,94 +12,91 @@ public sealed class InvoiceService : IInvoiceService
     {
         _db = db;
     }
-
-    public async Task<InvoiceListResponse> GetInvoicesAsync(
-        string? status,
-        int limit,
-        string? cursor,
-        CancellationToken cancellationToken)
+public async Task<PaginatedResponse<InvoiceResponse>> GetInvoicesAsync(
+    string? status,
+    int limit,
+    string? cursor,
+    CancellationToken cancellationToken)
+{
+    if (limit <= 0)
     {
-        if (limit <= 0)
-        {
-            throw new ApiException(
-                StatusCodes.Status400BadRequest,
-                "INVALID_LIMIT",
-                "Limit must be greater than zero.");
-        }
-
-        if (limit > 100)
-        {
-            throw new ApiException(
-                StatusCodes.Status400BadRequest,
-                "LIMIT_TOO_LARGE",
-                "Limit cannot be greater than 100.");
-        }
-
-        var query = _db.Invoices
-            .AsNoTracking()
-            .AsQueryable();
-
-        // Optional status filter
-        if (!string.IsNullOrWhiteSpace(status))
-        {
-            if (!Enum.TryParse<InvoiceStatus>(
-                    status,
-                    ignoreCase: true,
-                    out var invoiceStatus))
-            {
-                throw new ApiException(
-                    StatusCodes.Status400BadRequest,
-                    "INVALID_STATUS",
-                    $"Invalid invoice status '{status}'.");
-            }
-
-            query = query.Where(x => x.Status == invoiceStatus);
-        }
-
-        // Cursor pagination
-        if (!string.IsNullOrWhiteSpace(cursor))
-        {
-            if (!Guid.TryParse(cursor, out var cursorId))
-            {
-                throw new ApiException(
-                    StatusCodes.Status400BadRequest,
-                    "INVALID_CURSOR",
-                    "The supplied cursor is invalid.");
-            }
-
-            query = query.Where(x => x.Id > cursorId);
-        }
-
-        var invoices = await query
-            .OrderBy(x => x.Id)
-            .Take(limit + 1)
-            .ToListAsync(cancellationToken);
-
-        var hasMore = invoices.Count > limit;
-
-        if (hasMore)
-        {
-            invoices = invoices.Take(limit).ToList();
-        }
-
-        var items = invoices
-            .Select(MapToResponse)
-            .ToList();
-
-        string? nextCursor = null;
-
-        if (hasMore && invoices.Count > 0)
-        {
-            nextCursor = invoices[^1].Id.ToString();
-        }
-
-        return new InvoiceListResponse
-        {
-            Items = items,
-            NextCursor = nextCursor
-        };
+        throw new ApiException(
+            StatusCodes.Status400BadRequest,
+            "INVALID_LIMIT",
+            "Limit must be greater than zero.");
     }
 
+    if (limit > 100)
+    {
+        throw new ApiException(
+            StatusCodes.Status400BadRequest,
+            "LIMIT_TOO_LARGE",
+            "Limit cannot be greater than 100.");
+    }
+
+    var query = _db.Invoices
+        .AsNoTracking()
+        .AsQueryable();
+
+    // Optional status filter
+    if (!string.IsNullOrWhiteSpace(status))
+    {
+        if (!Enum.TryParse<InvoiceStatus>(
+                status,
+                ignoreCase: true,
+                out var invoiceStatus))
+        {
+            throw new ApiException(
+                StatusCodes.Status400BadRequest,
+                "INVALID_STATUS",
+                $"Invalid invoice status '{status}'.");
+        }
+
+        query = query.Where(x => x.Status == invoiceStatus);
+    }
+
+    // Cursor pagination
+    if (!string.IsNullOrWhiteSpace(cursor))
+    {
+        if (!Guid.TryParse(cursor, out var cursorId))
+        {
+            throw new ApiException(
+                StatusCodes.Status400BadRequest,
+                "INVALID_CURSOR",
+                "The supplied cursor is invalid.");
+        }
+
+        query = query.Where(x => x.Id > cursorId);
+    }
+
+    var invoices = await query
+        .OrderBy(x => x.Id)
+        .Take(limit + 1)
+        .ToListAsync(cancellationToken);
+
+    var hasMore = invoices.Count > limit;
+
+    if (hasMore)
+    {
+        invoices = invoices.Take(limit).ToList();
+    }
+
+    var items = invoices
+        .Select(MapToResponse)
+        .ToList();
+
+    string? nextCursor = null;
+
+    if (hasMore && invoices.Count > 0)
+    {
+        nextCursor = invoices[^1].Id.ToString();
+    }
+
+    return new PaginatedResponse<InvoiceResponse>(
+        items,
+        nextCursor);
+}
+    
     public async Task<InvoiceResponse> CreateAsync(
         CreateInvoiceRequest request,
         string idempotencyKey,

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.RateLimiting;
 
 namespace AgentReadyApi.Controllers;
 [ApiController]
-[Route("api/invoices")]
+[Route("api/invoice")]
 public class InvoiceController : ControllerBase
 {
     private readonly IInvoiceService _service;
@@ -54,9 +54,13 @@ public class InvoiceController : ControllerBase
             cancellationToken);
 
         return CreatedAtAction(
-            nameof(GetInvoiceAsync),
+            nameof(GetInvoice),
             new { id = result.Id },
-            result);
+            new
+            {
+                result.Id,
+                result.Status
+            });
     }
 
     /// <summary>
@@ -64,7 +68,7 @@ public class InvoiceController : ControllerBase
     /// </summary>
     [Authorize(Policy = "InvoicesRead")]
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetInvoiceAsync(
+    public async Task<IActionResult> GetInvoice(
         Guid id,
         CancellationToken cancellationToken)
     {
@@ -109,8 +113,9 @@ public class InvoiceController : ControllerBase
 
     /// <summary>
     /// Cancels an invoice using a previously created intent.
-    /// </summary>[Authorize(Policy = "InvoicesWrite")]
-    [HttpPost("{id:guid}/cancel")]
+    /// </summary>
+    //[Authorize(Policy = "InvoicesWrite")]
+    [HttpPost("cancel")]
     public async Task<IActionResult> CancelAsync(
         [FromBody] CancelInvoiceRequest request,
         CancellationToken cancellationToken)

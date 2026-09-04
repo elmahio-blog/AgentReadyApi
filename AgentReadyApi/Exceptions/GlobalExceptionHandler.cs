@@ -38,7 +38,7 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
                 ? exception.Message
                 : "An unexpected error occurred.",
 
-            Type = $"https://api.example.com/problems/{errorCode}"
+            Type = $"https://api.invoice.com/problems/{errorCode}"
         };
 
         problem.Extensions["errorCode"] = errorCode;
